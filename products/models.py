@@ -11,6 +11,20 @@ class ProductStatus(models.TextChoices):
 class Product(models.Model):
     def __str__(self):
         return f"[{self.id}] {self.title}"
+    
+    def save(self, *args, **kwargs):
+        if self.pk: #이미 DB에 존재하는 데이터인지 검증하기 위함
+            old = Product.objects.get(pk = self.pk) # get(pk = self.pk) 는 pk 즉, id를 가져오겠다는 뜻
+
+            if old.status != self.status: #id에 해당하는 DB에 기존 저장된 상태(old.status)와 지금 저장하려는 상태(self.status)가 다를 때 상태 변경 History 생성 로직 실행
+                ProductStatusHistory.objects.create(
+                    product = self,
+                    from_status = old.status,
+                    to_status = self.status,
+                    changed_by = "system",
+                )
+
+        super().save(*args, **kwargs)
 
 
     title = models.CharField(max_length = 100)
