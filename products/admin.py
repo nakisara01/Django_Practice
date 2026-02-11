@@ -1,7 +1,8 @@
 from django.contrib import admin
 from .models import Product
 from .models import ProductStatusHistory
-@admin.register(Product)
+from .models import Investment
+@admin.register(Product) #함수 정의 시 실행
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
         "id",
@@ -19,4 +20,12 @@ class ProductStatusHistoryAdmin(admin.ModelAdmin):
         "from_status",
         "to_status",
         "changed_at"
+    )
+
+@admin.register(Investment)
+class InvestmentAdmin(admin.ModelAdmin):
+    list_display = (
+        "product",
+        "amount",
+        "investor_name",
     )

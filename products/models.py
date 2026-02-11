@@ -70,3 +70,28 @@ class ProductStatusHistory(models.Model):
     changed_by = models.CharField(max_length = 100)
     changed_at = models.DateTimeField(auto_now_add=True)
     reason = models.TextField(blank = True)
+
+class Investment(models.Model):
+
+    def save(self, *args, **kwargs):
+        is_new = self.pk is None
+        super().save(*args, **kwargs)
+
+        if is_new:
+            p = self.product
+            p.current_amount += self.amount
+
+            if p.current_amount >= p.target_amount:
+                p.status = ProductStatus.CLOSED
+            
+            p.save()
+
+    product = models.ForeignKey(Product, on_delete = models.CASCADE, related_name = "investments")
+    
+    amount = models.DecimalField(
+        max_digits = 15, 
+        decimal_places = 0
+    )
+
+    investor_name = models.CharField(max_length = 100, default = "anonymous")
+    created_at = models.DateTimeField(auto_now_add = True)
