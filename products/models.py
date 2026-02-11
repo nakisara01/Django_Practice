@@ -26,7 +26,7 @@ class Product(models.Model):
 
         super().save(*args, **kwargs)
 
-
+    #id = models.BigAutoField(primary_key = True) 형태로 Django가 알아서 처리
     title = models.CharField(max_length = 100)
     content = models.TextField()
 
